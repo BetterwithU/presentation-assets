@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>프리셋 갤러리</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    background: #0f0f12;
+    color: #e5e7eb;
+    padding: 24px 20px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .intro { margin-bottom: 20px; }
+  .intro h2 { font-size: 20px; color: #f9fafb; margin-bottom: 6px; }
+  .intro p { font-size: 13px; color: #9ca3af; }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid #27272a;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .tab:hover { color: #e5e7eb; }
+  .tab.active {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+  }
+  .badge {
+    display: inline-block;
+    background: #1f2937;
+    color: #9ca3af;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  h1 { font-size: 26px; margin-bottom: 6px; color: #f9fafb; }
+  .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 16px; }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .meta-item .label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .meta-item .value { font-size: 13px; color: #e5e7eb; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #4b5563; }
+  .card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; background: #000; }
+  .card-body { padding: 10px 14px; }
+  .role {
+    display: inline-block;
+    background: #1e3a8a;
+    color: #dbeafe;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .style-name { font-size: 13px; color: #d1d5db; }
+  footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #27272a; font-size: 12px; color: #6b7280; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="intro">
+    <h2>추천 프리셋</h2>
+    <p>탭을 클릭하여 각 프리셋의 디자인을 비교해보세요.</p>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="content"></div>
+
+  <footer>샘플 슬라이드는 NotebookLM 렌더링 결과물입니다. 실제 제작 시 내용에 맞춰 재렌더링됩니다.</footer>
+</div>
+
+<script>
+const PRESETS = {
+  "A": {
+    "emoji": "🖤",
+    "kr": "다크 테크",
+    "en": "Dark Tech",
+    "tone": "저명도 배경 + 네온 액센트 + 모노스페이스",
+    "usage": "보안 B2B 피칭, 블록체인·AI 스타트업, IT 컨퍼런스",
+    "styles": "07 사이버펑크 · 43 다크 모드 · 44 디지털 노드 · 08 터미널 · 10 홀로그램",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "07 사이버펑크",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "10 홀로그램",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "43 다크 모드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "44 디지털 노드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "08 터미널",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "07 사이버펑크 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_A/6_ending.png"
+      }
+    ]
+  },
+  "B": {
+    "emoji": "🤍",
+    "kr": "클린 비즈니스",
+    "en": "Clean Business",
+    "tone": "화이트 스페이스 + 그리드 + 산세리프 포멀리티",
+    "usage": "맥킨지 스타일 전략 제안, 연간 사업계획 이사회 보고",
+    "styles": "02 비즈니스 미니멀 · 24 모던 미니멀 포스터 · 48 스위스 그리드 · 33 프리미엄 컨설팅 · 50 클린 화이트 미니멀",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "24 모던 미니멀 포스터",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "50 클린 화이트 미니멀",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "33 프리미엄 컨설팅",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "48 스위스 그리드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "02 비즈니스 미니멀",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "50 클린 화이트 미니멀 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_B/6_ending.png"
+      }
+    ]
+  },
+  "C": {
+    "emoji": "🏢",
+    "kr": "프리미엄 코퍼레이트",
+    "en": "Premium Corporate",
+    "tone": "라이트 에디토리얼 + 사진 + 데이터 시각화",
+    "usage": "연차보고서, 브랜드 애뉴얼, 임원급 전략 보고",
+    "styles": "23 뉴스레터 에디토리얼 · 37 프리미엄 스톡 사진 · 32 데이터 스토리텔링 · 28 Before/After 비교",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "37 프리미엄 스톡 사진",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "37 프리미엄 스톡 사진 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "23 뉴스레터 에디토리얼",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "32 데이터 스토리텔링",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "28 Before/After 비교",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "23 뉴스레터 에디토리얼 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_C/6_ending.png"
+      }
+    ]
+  },
+  "D": {
+    "emoji": "📊",
+    "kr": "인포그래픽",
+    "en": "Infographic",
+    "tone": "정보 시각화 중심, 2D 플랫 라인",
+    "usage": "정부·공공 정책 설명회, 제조 공정·SaaS 온보딩",
+    "styles": "25 인포그래픽 타임라인 · 39 아이소메트릭 플랫 · 36 미니멀 라인아트 · 41 스텝 바이 스텝 매뉴얼",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "39 아이소메트릭 플랫",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "25 인포그래픽 타임라인",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "36 미니멀 라인아트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "36 미니멀 라인아트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "41 스텝 바이 스텝 매뉴얼",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "39 아이소메트릭 플랫 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_D/6_ending.png"
+      }
+    ]
+  },
+  "E": {
+    "emoji": "💜",
+    "kr": "트렌디 에너지",
+    "en": "Trendy Energy",
+    "tone": "고채도 + 기하학 + 컨템포러리 웹 감성",
+    "usage": "D2C 브랜드 피칭, 마케팅팀 분기 캠페인 리뷰",
+    "styles": "49 네온 그라디언트 · 47 그라디언트 지오메트릭 · 40 듀오톤 그래픽 · 01 벤토 그리드",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "49 네온 그라디언트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "40 듀오톤 그래픽",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "01 벤토 그리드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "01 벤토 그리드 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "47 그라디언트 지오메트릭",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "49 네온 그라디언트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_E/6_ending.png"
+      }
+    ]
+  },
+  "F": {
+    "emoji": "🌿",
+    "kr": "따뜻한 공감",
+    "en": "Warm Empathy",
+    "tone": "수작업 질감 + 아날로그 표면 + 따뜻한 중간톤",
+    "usage": "NGO·사회적기업 임팩트 리포트, UX 리서치 결과 발표",
+    "styles": "03 워터컬러 · 31 리서치 데스크 · 35 스케치 노트 · 46 폴라로이드 무드보드 · 20 페이퍼컷",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "46 폴라로이드 무드보드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "20 페이퍼컷",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "31 리서치 데스크",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "35 스케치 노트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "35 스케치 노트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "03 워터컬러",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_F/6_ending.png"
+      }
+    ]
+  },
+  "G1": {
+    "emoji": "👥",
+    "kr": "플랫 코퍼레이트 2D",
+    "en": "Flat Corporate · 2D",
+    "tone": "플랫 2D 벡터 일관",
+    "usage": "SaaS 제품 데모, 사내 툴 도입 설명, 스타트업 블로그 톤",
+    "styles": "18 플랫 코퍼레이트 · 21 플랫 벡터 모션그래픽 · 34 협업툴 메시지형",
+    "count": "3종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "18 플랫 코퍼레이트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "21 플랫 벡터 모션그래픽",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "34 협업툴 메시지형",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "34 협업툴 메시지형 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "21 플랫 벡터 모션그래픽 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "18 플랫 코퍼레이트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_G1/6_ending.png"
+      }
+    ]
+  },
+  "H": {
+    "emoji": "🔬",
+    "kr": "교육/학술",
+    "en": "Educational",
+    "tone": "아날로그 학술 + 종이·잉크 질감",
+    "usage": "학부 강의, 사이언스 커뮤니케이션, 고전 학술서 톤",
+    "styles": "45 클래식 교과서 · 11 식물학 과학 일러스트 · 06 화이트보드 · 15 레트로 코믹 블루프린트",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "11 식물학 과학 일러스트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "15 레트로 코믹 블루프린트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "45 클래식 교과서",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "15 레트로 코믹 블루프린트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "06 화이트보드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "11 식물학 과학 일러스트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_H/6_ending.png"
+      }
+    ]
+  },
+  "I": {
+    "emoji": "🚀",
+    "kr": "SF/미래",
+    "en": "Sci-Fi",
+    "tone": "시네마틱·네온·디지털 메시·고에너지",
+    "usage": "게임·VFX 스튜디오 포트폴리오, 우주·심우주 R&D 컨셉 피칭",
+    "styles": "22 시네마틱 우주 SF · 10 홀로그램 · 07 사이버펑크 · 16 하이옥탄 애니메이션 · 44 디지털 노드",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "22 시네마틱 우주 SF",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "07 사이버펑크",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "10 홀로그램",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "44 디지털 노드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "44 디지털 노드 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "16 하이옥탄 애니메이션",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_I/6_ending.png"
+      }
+    ]
+  },
+  "J": {
+    "emoji": "🎉",
+    "kr": "레트로/팝",
+    "en": "Retro Pop",
+    "tone": "20세기 중후반 인쇄·필름 레트로",
+    "usage": "F&B·패션 브랜드 캠페인 제안, 팝업스토어 기획",
+    "styles": "13 레트로 팝 · 14 빈티지 액션 코믹스 · 40 듀오톤 · 46 폴라로이드",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "13 레트로 팝",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "14 빈티지 액션 코믹스",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "40 듀오톤 그래픽",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "40 듀오톤 그래픽 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "14 빈티지 액션 코믹스 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "46 폴라로이드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_J/6_ending.png"
+      }
+    ]
+  },
+  "K1": {
+    "emoji": "🎨",
+    "kr": "일본 일러스트",
+    "en": "Japanese Illustration",
+    "tone": "일본 일러스트 문법 (잉크 선화·파스텔·동적 애니)",
+    "usage": "애니·만화 IP 사업화, 콘텐츠 기획, 일본 시장 타깃 브랜드",
+    "styles": "04 망가 · 12 카와이 파스텔 · 16 하이옥탄 애니메이션",
+    "count": "3종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "12 카와이 파스텔",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "16 하이옥탄 애니메이션",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "04 망가",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "12 카와이 파스텔 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "04 망가 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "16 하이옥탄 애니메이션 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K1/6_ending.png"
+      }
+    ]
+  },
+  "K2": {
+    "emoji": "📃",
+    "kr": "종이·물감 공예",
+    "en": "Paper & Watercolor Craft",
+    "tone": "종이·물감 수작업 감성",
+    "usage": "동화·아동도서 기획, 수공예 브랜드 피칭, 공예·워크숍 프로모션",
+    "styles": "03 워터컬러 · 38 팝업북 · 20 페이퍼컷",
+    "count": "3종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "38 팝업북",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "20 페이퍼컷",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "03 워터컬러",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "20 페이퍼컷 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "38 팝업북 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "03 워터컬러 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_K2/6_ending.png"
+      }
+    ]
+  },
+  "L": {
+    "emoji": "🎮",
+    "kr": "게임/만화",
+    "en": "Game & Comic",
+    "tone": "게임·만화 서브컬처",
+    "usage": "인디게임 퍼블리셔 피칭, 웹툰 IP 사업화 제안",
+    "styles": "09 복셀 아트 · 26 픽셀 아트 · 14 빈티지 액션 코믹스 · 16 하이옥탄 애니메이션 · 04 망가",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "16 하이옥탄 애니메이션",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "14 빈티지 액션 코믹스",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "04 망가",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "26 픽셀 아트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "09 복셀 아트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "16 하이옥탄 애니메이션 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_L/6_ending.png"
+      }
+    ]
+  },
+  "M": {
+    "emoji": "🌈",
+    "kr": "어린이/학생",
+    "en": "Kids",
+    "tone": "둥근 형태 + 친근한 채도 + 2D 일관",
+    "usage": "유아·초등 교육 콘텐츠, EdTech 학부모 설명회",
+    "styles": "12 카와이 파스텔 · 13 레트로 팝 · 20 페이퍼컷 · 41 스텝 바이 스텝",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "12 카와이 파스텔",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "13 레트로 팝",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "20 페이퍼컷",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "20 페이퍼컷 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "41 스텝 바이 스텝",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "12 카와이 파스텔 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_M/6_ending.png"
+      }
+    ]
+  },
+  "N1": {
+    "emoji": "💎",
+    "kr": "3D UI / 글래스 서피스",
+    "en": "3D UI / Glass Surface",
+    "tone": "볼륨·하이라이트·반사·Depth — 3D 렌더 공통 언어",
+    "usage": "SaaS 제품 데모, 테크 프로덕트 프레젠테이션, 모던 UI 데모",
+    "styles": "19 글래스모피즘 3D · 29 3D 아이콘 카드 · 05 뉴 모피즘 · 42 3D 아이소메트릭 비즈니스",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "19 글래스모피즘 3D",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "42 3D 아이소메트릭",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "05 뉴 모피즘",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "29 3D 아이콘 카드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "42 3D 아이소메트릭 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "19 글래스모피즘 3D (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/6_ending.png"
+      }
+    ]
+  },
+  "N2": {
+    "emoji": "📖",
+    "kr": "에디토리얼 매거진",
+    "en": "Editorial Magazine",
+    "tone": "에디토리얼 타이포그래피 + 사진 + 그리드 레이아웃",
+    "usage": "브랜드 애뉴얼리포트, CSR 보고서, 매거진형 브랜드북",
+    "styles": "23 뉴스레터 에디토리얼 · 48 스위스 그리드 · 24 미니멀 포스터 · 33 프리미엄 컨설팅 · 37 프리미엄 스톡 사진",
+    "count": "5종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "24 모던 미니멀 포스터",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "37 프리미엄 스톡 사진",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "23 뉴스레터 에디토리얼",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "48 스위스 그리드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "33 프리미엄 컨설팅",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "37 프리미엄 스톡 사진 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N2/6_ending.png"
+      }
+    ]
+  },
+  "N3": {
+    "emoji": "📘",
+    "kr": "온보딩·튜토리얼",
+    "en": "Onboarding & Tutorial",
+    "tone": "기능적·설명적 라인아트",
+    "usage": "SaaS 고객 교육, 사내 매뉴얼, 제품 온보딩 가이드",
+    "styles": "41 스텝 바이 스텝 매뉴얼 · 36 미니멀 라인아트 · 06 화이트보드 · 34 협업툴 메시지형",
+    "count": "4종",
+    "slides": [
+      {
+        "role": "표지",
+        "style": "34 협업툴 메시지형",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/1_cover.png"
+      },
+      {
+        "role": "섹션 오프닝",
+        "style": "06 화이트보드",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/2_section.png"
+      },
+      {
+        "role": "본문",
+        "style": "36 미니멀 라인아트",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/3_body.png"
+      },
+      {
+        "role": "데이터/차트",
+        "style": "36 미니멀 라인아트 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/4_data.png"
+      },
+      {
+        "role": "프로세스/도식",
+        "style": "41 스텝 바이 스텝",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/5_process.png"
+      },
+      {
+        "role": "마무리",
+        "style": "34 협업툴 메시지형 (겸임)",
+        "url": "https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N3/6_ending.png"
+      }
+    ]
+  }
+};
+
+// Claude가 이 배열을 추천에 맞춰 수정합니다 (2~3개 권장)
+const visiblePresets = ["A", "F", "H"];
+
+function render(code) {
+  const p = PRESETS[code];
+  if (!p) return;
+
+  document.querySelectorAll(".tab").forEach(t => {
+    t.classList.toggle("active", t.dataset.code === code);
+  });
+
+  const cards = p.slides.map(s => `
+    <div class="card">
+      <img src="${s.url}" alt="${s.role}" loading="lazy">
+      <div class="card-body">
+        <span class="role">${s.role}</span>
+        <div class="style-name">${s.style}</div>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("content").innerHTML = `
+    <div class="badge">PRESET ${code} · ${p.kr}</div>
+    <h1>${p.emoji} ${p.en}</h1>
+    <p class="subtitle">${p.tone}</p>
+    <div class="meta">
+      <div class="meta-item"><div class="label">용도</div><div class="value">${p.usage}</div></div>
+      <div class="meta-item"><div class="label">구성 스타일</div><div class="value">${p.styles}</div></div>
+      <div class="meta-item"><div class="label">스타일 수</div><div class="value">${p.count}</div></div>
+    </div>
+    <div class="grid">${cards}</div>
+  `;
+}
+
+const tabsEl = document.getElementById("tabs");
+visiblePresets.forEach(code => {
+  const p = PRESETS[code];
+  if (!p) return;
+  const btn = document.createElement("button");
+  btn.className = "tab";
+  btn.dataset.code = code;
+  btn.textContent = `${p.emoji} Preset ${code} · ${p.kr}`;
+  btn.onclick = () => render(code);
+  tabsEl.appendChild(btn);
+});
+
+if (visiblePresets.length > 0) render(visiblePresets[0]);
+</script>
+</body>
+</html>

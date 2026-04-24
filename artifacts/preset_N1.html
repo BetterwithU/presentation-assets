@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Preset N1 — 3D UI / 글래스 서피스 (3D UI / Glass Surface)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", sans-serif;
+    background: #0f0f12;
+    color: #e5e7eb;
+    padding: 32px 24px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  .badge {
+    display: inline-block;
+    background: #1f2937;
+    color: #9ca3af;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  h1 { font-size: 28px; margin-bottom: 6px; color: #f9fafb; }
+  .subtitle { color: #9ca3af; font-size: 14px; margin-bottom: 16px; }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .meta-item .label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .meta-item .value { font-size: 13px; color: #e5e7eb; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #4b5563; }
+  .card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; background: #000; }
+  .card-body { padding: 12px 14px; }
+  .role {
+    display: inline-block;
+    background: #1e3a8a;
+    color: #dbeafe;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .style-name { font-size: 13px; color: #d1d5db; }
+  footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid #27272a; font-size: 12px; color: #6b7280; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">PRESET N1 · 3D UI / 글래스 서피스</div>
+    <h1>💎 3D UI / Glass Surface</h1>
+    <p class="subtitle">볼륨·하이라이트·반사·Depth — 3D 렌더 공통 언어</p>
+  </header>
+
+  <div class="meta">
+    <div class="meta-item"><div class="label">용도</div><div class="value">SaaS 제품 데모, 테크 프로덕트 프레젠테이션, 모던 UI 데모</div></div>
+    <div class="meta-item"><div class="label">구성 스타일</div><div class="value">19 글래스모피즘 3D · 29 3D 아이콘 카드 · 05 뉴 모피즘 · 42 3D 아이소메트릭 비즈니스</div></div>
+    <div class="meta-item"><div class="label">스타일 수</div><div class="value">4종</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/1_cover.png" alt="표지">
+      <div class="card-body">
+        <span class="role">표지</span>
+        <div class="style-name">19 글래스모피즘 3D</div>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/2_section.png" alt="섹션 오프닝">
+      <div class="card-body">
+        <span class="role">섹션 오프닝</span>
+        <div class="style-name">42 3D 아이소메트릭</div>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/3_body.png" alt="본문">
+      <div class="card-body">
+        <span class="role">본문</span>
+        <div class="style-name">05 뉴 모피즘</div>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/4_data.png" alt="데이터/차트">
+      <div class="card-body">
+        <span class="role">데이터/차트</span>
+        <div class="style-name">29 3D 아이콘 카드</div>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/5_process.png" alt="프로세스/도식">
+      <div class="card-body">
+        <span class="role">프로세스/도식</span>
+        <div class="style-name">42 3D 아이소메트릭 (겸임)</div>
+      </div>
+    </div>
+    <div class="card">
+      <img src="https://raw.githubusercontent.com/BetterwithU/presentation-assets/main/presets/preset_N1/6_ending.png" alt="마무리">
+      <div class="card-body">
+        <span class="role">마무리</span>
+        <div class="style-name">19 글래스모피즘 3D (겸임)</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Preset N1 · 샘플 슬라이드는 NotebookLM 렌더링 결과물이며, 실제 제작 시 내용에 맞춰 재렌더링됩니다.</footer>
+</div>
+</body>
+</html>
